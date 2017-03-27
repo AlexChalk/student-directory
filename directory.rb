@@ -6,7 +6,7 @@ def input_students
   students = []
   loop do
     $options.each do |option|
-      puts "What is the student's #{option.to_s.gsub(/_/, " ")}?"
+      prompt_for_information_on(option)
       input = gets.chomp
       return students if option == :name && input == ""
       if option == :name
@@ -54,7 +54,19 @@ end
 
 def print_footer(names)
   puts "-----------".center($line_width)
-  puts "Overall, we have #{names.count} great students".center($line_width)
+  if names.count == 1
+    puts "Overall, we have #{names.count} great student".center($line_width)
+  else
+    puts "Overall, we have #{names.count} great students".center($line_width)
+  end
+end
+
+def prompt_for_information_on(option)
+  if option.to_s.chars.last == "s"
+    puts "What are the student's #{option.to_s.gsub(/_/, " ")}?"
+  else
+    puts "What is the student's #{option.to_s.gsub(/_/, " ")}?"
+  end
 end
 
 
