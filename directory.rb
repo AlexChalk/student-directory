@@ -11,6 +11,9 @@ def input_students
       return students if option == :name && input == ""
       if option == :name
         students << {name: input}
+      elsif option == :cohort
+        students.last[option] = input.downcase.to_sym
+        students.last[option] = :november if students.last[option] == :""
       else
         students.last[option] = input
       end
@@ -22,7 +25,7 @@ end
 def print_students(students)
   students.each do |student|
     student.each_value do |v|
-      print v.ljust($column_width)
+      print v.to_s.ljust($column_width)
     end
     print "\n"
   end
