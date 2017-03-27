@@ -22,14 +22,14 @@ def input_students
   end
 end
 
-#def print_students(students)
-#  students.each do |student|
-#    student.each_value do |v|
-#      print v.to_s.ljust($column_width)
-#    end
-#    print "\n"
-#  end
-#end
+def print_students(students)
+  students.each do |student|
+    student.each_value do |v|
+      print v.to_s.ljust($column_width)
+    end
+    print "\n"
+  end
+end
 
 def print_by_cohort(students)
   cohorts = students.map{ |x| x[:cohort] }.uniq
