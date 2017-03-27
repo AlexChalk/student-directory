@@ -33,20 +33,21 @@ def input_students
 end
 
 def print_header
-  puts "The students of Villains' Academy"
-  puts "-----------"
+  puts "The students of Villains' Academy".center(110)
+  puts "-----------".center(110)
 end
 
 def print(students)
   students.each_with_index do |student, number|
     if student[:name].downcase[0] == "t" && student[:name].length < 12
-      puts "#{number+1}. #{student[:name]}, Height: #{student[:height]}, Country of birth: #{student[:country_of_birth]}, Hobbies: #{student[:hobbies]} (#{student[:cohort]} cohort)"
+      puts "#{number+1}. #{student[:name]}, 	Height: #{student[:height]}, 	Country of birth: #{student[:country_of_birth]}, 	Hobbies: #{student[:hobbies]} 	(#{student[:cohort]} cohort)"
     end
   end
 end
 
 def print_footer(names)
-  puts "Overall, we have #{names.count} great students"
+  puts "-----------".center(110)
+  puts "Overall, we have #{names.count} great students".center(110)
 end
 #nothing happens until we call the methods
 #students = input_students
