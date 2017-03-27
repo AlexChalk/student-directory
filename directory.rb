@@ -7,7 +7,7 @@ def input_students
   loop do
     $options.each do |option|
       prompt_for_information_on(option)
-      input = gets.chomp
+      input = gets.delete("\n")
       return students if option == :name && input == ""
       if option == :name
         students << {name: input}
