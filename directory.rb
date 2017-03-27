@@ -39,7 +39,7 @@ end
 
 def print(students)
   students.each_with_index do |student, number|
-    if student[:name].downcase[0] == "t"
+    if student[:name].downcase[0] == "t" && student[:name].length < 12
       puts "#{number+1}. #{student[:name]} (#{student[:cohort]} cohort)"
     end
   end
