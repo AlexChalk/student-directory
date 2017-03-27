@@ -1,56 +1,53 @@
-# Let's put all students into an array
-students = [
-  {name: "Dr. Hannibal Lecter", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
-  {name: "Darth Vader", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
-  {name: "Nurse Ratched", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
-  {name: "Michael Corleone", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
-  {name: "Alex DeLarge", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
-  {name: "The Wicked Witch of the West", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
-  {name: "Terminator", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
-  {name: "Freddy Krueger", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
-  {name: "The Joker", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
-  {name: "Joffrey Baratheon", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
-  {name: "Norman Bates", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november}
-]
-
 def input_students
-  puts "Please enter the names of the students"
-  puts "To finish, just hit return twice"
+  puts "Please enter the details of the students"
+  puts "To finish, just hit return when asked for a name"
+  puts "To ignore a value, just hit return"
   # create an empty array
   students = []
-  # get the first name
-  name = gets.chomp
-  # while the name is no empty, repeat this code
-  while !name.empty? do
-    # add the student hash to the array
-    students << {name: name, cohort: :november}
-    puts "Now we have #{students.count} students"
-    # get another name from the user
-    name = gets.chomp
+  loop do
+    $options.each do |option|
+      puts "What is the student's #{option.to_s.gsub(/_/, " ")}?"
+      input = gets.chomp
+      return students if option == :name && input == ""
+      if option == :name
+        students << {name: input}
+      else
+        students.last[option] = input
+      end
+    end
+    students
   end
-  # return the array of students
-  students
+end
+
+def print_students(students)
+  students.each do |student|
+    student.each_value do |v|
+      print v.ljust($column_width)
+    end
+    print "\n"
+  end
 end
 
 def print_header
-  puts "The students of Villains' Academy".center(110)
-  puts "-----------".center(110)
-end
-
-def print(students)
-  students.each_with_index do |student, number|
-    if student[:name].downcase[0] == "t" && student[:name].length < 12
-      puts "#{number+1}. #{student[:name]}, 	Height: #{student[:height]}, 	Country of birth: #{student[:country_of_birth]}, 	Hobbies: #{student[:hobbies]} 	(#{student[:cohort]} cohort)"
-    end
-  end
+  puts "The students of Villains Academy".center($line_width)
+  puts "-------------".center($line_width)
+  $options.each { |option| print option.to_s.ljust($column_width)}
+  print "\n"
 end
 
 def print_footer(names)
-  puts "-----------".center(110)
-  puts "Overall, we have #{names.count} great students".center(110)
+  puts "-----------".center($line_width)
+  puts "Overall, we have #{names.count} great students".center($line_width)
 end
-#nothing happens until we call the methods
-#students = input_students
+
+
+$line_width = 110
+$column_width = 20
+$options = [:name, :height, :hobbies, :country_of_birth, :cohort]
+students = input_students
 print_header
-print(students)
+print_students(students)
 print_footer(students)
+
+
+#    if student[:name].downcase[0] == "t" && student[:name].length < 12
