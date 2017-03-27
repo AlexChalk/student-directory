@@ -1,16 +1,16 @@
 # Let's put all students into an array
 students = [
-  {name: "Dr. Hannibal Lecter", cohort: :november},
-  {name: "Darth Vader", cohort: :november},
-  {name: "Nurse Ratched", cohort: :november},
-  {name: "Michael Corleone", cohort: :november},
-  {name: "Alex DeLarge", cohort: :november},
-  {name: "The Wicked Witch of the West", cohort: :november},
-  {name: "Terminator", cohort: :november},
-  {name: "Freddy Krueger", cohort: :november},
-  {name: "The Joker", cohort: :november},
-  {name: "Joffrey Baratheon", cohort: :november},
-  {name: "Norman Bates", cohort: :november}
+  {name: "Dr. Hannibal Lecter", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
+  {name: "Darth Vader", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
+  {name: "Nurse Ratched", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
+  {name: "Michael Corleone", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
+  {name: "Alex DeLarge", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
+  {name: "The Wicked Witch of the West", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
+  {name: "Terminator", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
+  {name: "Freddy Krueger", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
+  {name: "The Joker", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
+  {name: "Joffrey Baratheon", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november},
+  {name: "Norman Bates", height: "6\'0\"", hobbies: "Cricket, Basketball", country_of_birth: "Jamaica", cohort: :november}
 ]
 
 def input_students
@@ -38,12 +38,10 @@ def print_header
 end
 
 def print(students)
-  index_count = 0
-  while index_count <= students.length-1
-    if students[index_count][:name].downcase[0] == "t" && students[index_count][:name].length < 12
-      puts "#{index_count+1}. #{students[index_count][:name]} (#{students[index_count][:cohort]} cohort)"
+  students.each_with_index do |student, number|
+    if student[:name].downcase[0] == "t" && student[:name].length < 12
+      puts "#{number+1}. #{student[:name]}, Height: #{student[:height]}, Country of birth: #{student[:country_of_birth]}, Hobbies: #{student[:hobbies]} (#{student[:cohort]} cohort)"
     end
-    index_count += 1
   end
 end
 
