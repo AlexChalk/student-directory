@@ -74,10 +74,12 @@ $line_width = 110
 $column_width = 20
 $options = [:name, :height, :hobbies, :country_of_birth, :cohort]
 students = input_students
-print_header
-print_by_cohort(students)
-#print_students(students)
-print_footer(students)
+unless students == []
+  print_header
+  print_by_cohort(students)
+  #print_students(students)
+  print_footer(students)
+end
 
 
 #    if student[:name].downcase[0] == "t" && student[:name].length < 12
