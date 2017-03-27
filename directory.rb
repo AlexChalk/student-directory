@@ -22,12 +22,26 @@ def input_students
   end
 end
 
-def print_students(students)
-  students.each do |student|
-    student.each_value do |v|
-      print v.to_s.ljust($column_width)
+#def print_students(students)
+#  students.each do |student|
+#    student.each_value do |v|
+#      print v.to_s.ljust($column_width)
+#    end
+#    print "\n"
+#  end
+#end
+
+def print_by_cohort(students)
+  cohorts = students.map{ |x| x[:cohort] }.uniq
+  cohorts.each do |cohort|
+    students.each do |student|
+      if student[:cohort] == cohort
+        student.each_value do |v|
+          print v.to_s.ljust($column_width)
+        end
+        print "\n"
+      end
     end
-    print "\n"
   end
 end
 
@@ -49,7 +63,8 @@ $column_width = 20
 $options = [:name, :height, :hobbies, :country_of_birth, :cohort]
 students = input_students
 print_header
-print_students(students)
+print_by_cohort(students)
+#print_students(students)
 print_footer(students)
 
 
