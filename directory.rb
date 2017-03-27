@@ -38,10 +38,12 @@ def print_header
 end
 
 def print(students)
-  students.each_with_index do |student, number|
-    if student[:name].downcase[0] == "t" && student[:name].length < 12
-      puts "#{number+1}. #{student[:name]} (#{student[:cohort]} cohort)"
+  index_count = 0
+  while index_count <= students.length-1
+    if students[index_count][:name].downcase[0] == "t" && students[index_count][:name].length < 12
+      puts "#{index_count+1}. #{students[index_count][:name]} (#{students[index_count][:cohort]} cohort)"
     end
+    index_count += 1
   end
 end
 
