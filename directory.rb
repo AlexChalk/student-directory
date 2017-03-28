@@ -12,6 +12,11 @@ def input_students
       if option == :name
         students << {name: input}
       elsif option == :cohort
+        while !($cohorts.include?(input.downcase))
+          puts "That's not a month of the year!"
+          puts "What is the student's cohort?"
+          input = gets.delete("\n")
+        end
         students.last[option] = input.downcase.to_sym
         students.last[option] = :november if students.last[option] == :""
       else
@@ -70,6 +75,7 @@ def prompt_for_information_on(option)
 end
 
 
+$cohorts = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december", ""]
 $line_width = 110
 $column_width = 20
 $options = [:name, :height, :hobbies, :country_of_birth, :cohort]
