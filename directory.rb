@@ -7,7 +7,7 @@ def input_students
   loop do
     $options.each do |option|
       prompt_for_information_on(option)
-      input = gets.delete("\n")
+      input = gets.chomp
       return students if option == :name && input == ""
       if option == :name
         students << {name: input}
@@ -15,7 +15,7 @@ def input_students
         while !($cohorts.include?(input.downcase))
           puts "That's not a month of the year!"
           puts "What is the student's cohort?"
-          input = gets.delete("\n")
+          input = gets.chomp
         end
         students.last[option] = input.downcase.to_sym
         students.last[option] = :november if students.last[option] == :""
@@ -50,6 +50,13 @@ def print_by_cohort(students)
   end
 end
 
+def print_menu
+  puts "What do you want to do?"
+  puts "Use '1' to input student details."
+  puts "Use '2' to display all student details on the system."
+  puts "Use '9' to exit the program."
+end
+
 def print_header
   puts "The students of Villains Academy".center($line_width)
   puts "-------------".center($line_width)
@@ -79,13 +86,31 @@ $cohorts = ["january", "february", "march", "april", "may", "june", "july", "aug
 $line_width = 110
 $column_width = 20
 $options = [:name, :height, :hobbies, :country_of_birth, :cohort]
-students = input_students
-unless students == []
-  print_header
-  print_by_cohort(students)
-  #print_students(students)
-  print_footer(students)
-end
 
+def interactive_menu
+  students = []
+  loop do
+    print_menu
+    selection = gets.chomp
+    case selection
+    when "1"
+      students = input_students
+    when "2"
+      #unless students == []
+        print_header
+        print_by_cohort(students)
+        #print_students(students)
+        print_footer(students)
+      #else
+      #  puts "There are no student details on the system at present."
+      #end
+    when "9"
+      exit
+    else
+      puts "I don't know what you meant, try again."
+    end
+  end
+end
+interactive_menu
 
 #    if student[:name].downcase[0] == "t" && student[:name].length < 12
