@@ -1,34 +1,38 @@
+@students = []
+$cohorts = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december", ""]
+$line_width = 110
+$column_width = 20
+$options = [:name, :height, :hobbies, :country_of_birth, :cohort]
+
 def input_students
   puts "Please enter the details of the students"
   puts "To finish, just hit return when asked for a name"
   puts "To ignore a value, just hit return"
   # create an empty array
-  students = []
   loop do
     $options.each do |option|
       prompt_for_information_on(option)
       input = gets.chomp
-      return students if option == :name && input == ""
+      return @students if option == :name && input == ""
       if option == :name
-        students << {name: input}
+        @students << {name: input}
       elsif option == :cohort
         while !($cohorts.include?(input.downcase))
           puts "That's not a month of the year!"
           puts "What is the student's cohort?"
           input = gets.chomp
         end
-        students.last[option] = input.downcase.to_sym
-        students.last[option] = :november if students.last[option] == :""
+        @students.last[option] = input.downcase.to_sym
+        @students.last[option] = :november if @students.last[option] == :""
       else
-        students.last[option] = input
+        @students.last[option] = input
       end
     end
-    students
   end
 end
 
-def print_students(students)
-  students.each do |student|
+def print_students
+  @students.each do |student|
     student.each_value do |v|
       print v.to_s.ljust($column_width)
     end
@@ -36,10 +40,10 @@ def print_students(students)
   end
 end
 
-def print_by_cohort(students)
-  cohorts = students.map{ |x| x[:cohort] }.uniq
+def print_student_list_by_cohort
+  cohorts = @students.map{ |x| x[:cohort] }.uniq
   cohorts.each do |cohort|
-    students.each do |student|
+    @students.each do |student|
       if student[:cohort] == cohort
         student.each_value do |v|
           print v.to_s.ljust($column_width)
@@ -64,12 +68,12 @@ def print_header
   print "\n"
 end
 
-def print_footer(names)
+def print_footer
   puts "-----------".center($line_width)
-  if names.count == 1
-    puts "Overall, we have #{names.count} great student".center($line_width)
+  if @students.count == 1
+    puts "Overall, we have #{@students.count} great student".center($line_width)
   else
-    puts "Overall, we have #{names.count} great students".center($line_width)
+    puts "Overall, we have #{@students.count} great students".center($line_width)
   end
 end
 
@@ -81,34 +85,34 @@ def prompt_for_information_on(option)
   end
 end
 
+def show_students
+  unless @students == []
+    print_header
+    print_student_list_by_cohort
+    #print_students
+    print_footer
+  else
+    puts "There are no student details on the system at present."
+  end
+end
 
-$cohorts = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december", ""]
-$line_width = 110
-$column_width = 20
-$options = [:name, :height, :hobbies, :country_of_birth, :cohort]
+def process(selection)
+  case selection
+  when "1"
+    @students = input_students
+  when "2"
+    show_students
+  when "9"
+    exit
+  else
+    puts "I don't know what you meant, try again."
+  end
+end
 
 def interactive_menu
-  students = []
   loop do
     print_menu
-    selection = gets.chomp
-    case selection
-    when "1"
-      students = input_students
-    when "2"
-      #unless students == []
-        print_header
-        print_by_cohort(students)
-        #print_students(students)
-        print_footer(students)
-      #else
-      #  puts "There are no student details on the system at present."
-      #end
-    when "9"
-      exit
-    else
-      puts "I don't know what you meant, try again."
-    end
+    process(gets.chomp)
   end
 end
 interactive_menu
