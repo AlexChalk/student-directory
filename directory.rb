@@ -58,6 +58,8 @@ def print_menu
   puts "What do you want to do?"
   puts "Use '1' to input student details."
   puts "Use '2' to display all student details on the system."
+  puts "Use '3' to save student details to students.csv."
+  puts "Use '4' to load student details from students.csv."
   puts "Use '9' to exit the program."
 end
 
@@ -96,12 +98,46 @@ def show_students
   end
 end
 
+def save_students
+  # open the file for writing
+  file = File.open("students.csv", "w")
+  # iterate over the array of students
+  @students.each do |student|
+    student_data = []
+    student.each_value { |v| student_data << v }
+    csv_line = student_data.join(",")
+    file.puts csv_line
+  end
+  file.close
+end
+
+def load_students
+  file = File.open("students.csv", "r")
+  file.readlines.each do |line|
+    array = line.chomp.split(",")
+    array.each_index do |x|
+      if x == 0
+        @students << {$options[x] => array[x]}
+      elsif x == array.length-1
+        @students.last[$options[x]] = array[x].to_sym
+      else
+        @students.last[$options[x]] = array[x]
+      end
+    end
+  end
+  file.close
+end
+
 def process(selection)
   case selection
   when "1"
     @students = input_students
   when "2"
     show_students
+  when "3"
+    save_students
+  when "4"
+    load_students
   when "9"
     exit
   else
