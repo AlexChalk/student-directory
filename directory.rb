@@ -1,3 +1,4 @@
+require 'CSV'
 @students = []
 $valid_cohorts = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 $line_width = 100
@@ -148,13 +149,11 @@ def save_students
   puts "Which file should we save to? Enter the filename below:"; print "> "
   filename = gets.chomp; filename = "students.csv" if filename == ""
   # open the file for writing
-  File.open(filename, "w") do |file| 
-  # iterate over the array of students
+  CSV.open(filename, "w") do |csv| 
     @students.each do |student|
       student_data = []
       student.each_value { |v| student_data << v }
-      csv_line = student_data.join(",")
-      file.puts csv_line
+      csv << student_data
     end
   end
   puts "Saved #{@students.count} students' data to #{filename}.".fancy_announcement
@@ -172,11 +171,8 @@ def load_students(filename = false)
   filename = gets.chomp unless filename; filename = "students.csv" if filename == ""
   @students = []
   if File.exists?(filename)
-    File.open(filename, "r") do |file| 
-      file.readlines.each do |line|
-        array = line.chomp.split(",")
-        build_student(array)
-      end
+    CSV.foreach(filename) do |row| 
+      build_student(row)
     end
     puts "Loaded #{@students.count} students' data from #{filename}.".fancy_announcement
   else
