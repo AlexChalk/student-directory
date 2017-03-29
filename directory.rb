@@ -21,21 +21,22 @@ def ensure_valid_cohort(input)
   while !($cohorts.include?(input.downcase))
     if input == ""
       return input = :november
+    else
+      print "That's not a month of the year!"
+      puts " What is the student's cohort?"
+      print "> "
+      input = STDIN.gets.chomp
     end
-    print "That's not a month of the year!"
-    puts " What is the student's cohort?"
-    print "> "
-    input = STDIN.gets.chomp
   end
   return input
 end
 
-def build_student(array, &custom_instructions)
-  block = (custom_instructions || Proc.new { |a| })
+def build_student(saved_data, &user_input_block)
+  block = (user_input_block || Proc.new { |a| })
   @student = {}
   $options.each_index do |x|
     input = block.call($options[x])
-    input ||= array[x]
+    input ||= saved_data[x]
     option_data_validity_checks(x, input)
   end
   @students << @student
@@ -53,11 +54,6 @@ def option_data_validity_checks(index, input)
   end
 end
 
-$get_user_input = Proc.new do |x|
-  prompt_for_information_on(x)
-  input = STDIN.gets.chomp
-end
-
 def input_students
   input_instructions
   loop do
@@ -65,6 +61,20 @@ def input_students
     puts "Would you like to enter another student?"; print "> "
     return @students if STDIN.gets.chomp.downcase == "no"
   end
+end
+
+$get_user_input = Proc.new do |x|
+  prompt_for_information_on(x)
+  input = STDIN.gets.chomp
+end
+
+def prompt_for_information_on(option)
+  if option.to_s.chars.last == "s"
+    puts "What are the student's #{option.to_s.gsub(/_/, " ")}?"
+  else
+    puts "What is the student's #{option.to_s.gsub(/_/, " ")}?"
+  end
+  print "> "
 end
 
 def print_students
@@ -118,15 +128,6 @@ def print_footer
   end
 end
 
-def prompt_for_information_on(option)
-  if option.to_s.chars.last == "s"
-    puts "What are the student's #{option.to_s.gsub(/_/, " ")}?"
-  else
-    puts "What is the student's #{option.to_s.gsub(/_/, " ")}?"
-  end
-  print "> "
-end
-
 def show_students
   unless @students == []
     print_header
@@ -163,24 +164,7 @@ def load_students(filename = "students.csv")
   file.close
 end
 
-def process(selection)
-  case selection
-  when "1"
-    @students = input_students
-  when "2"
-    show_students
-  when "3"
-    save_students
-  when "4"
-    load_students
-  when "9"
-    exit
-  else
-    puts "I don't know what you meant, try again."
-  end
-end
-
-def try_load_students
+def load_students_on_startup
   filename = ARGV.first
   if filename.nil?
     if File.exists?("students.csv")
@@ -202,7 +186,25 @@ def interactive_menu
     process(STDIN.gets.chomp)
   end
 end
-try_load_students
+
+def process(selection)
+  case selection
+  when "1"
+    @students = input_students
+  when "2"
+    show_students
+  when "3"
+    save_students
+  when "4"
+    load_students
+  when "9"
+    exit
+  else
+    puts "I don't know what you meant, try again."
+  end
+end
+
+load_students_on_startup
 interactive_menu
 
 #    if student[:name].downcase[0] == "t" && student[:name].length < 12
