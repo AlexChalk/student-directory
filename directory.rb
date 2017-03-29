@@ -1,29 +1,49 @@
 @students = []
-$cohorts = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december", ""]
-$line_width = 110
+$cohorts = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
+$line_width = 100
 $column_width = 20
 $options = [:name, :height, :hobbies, :country_of_birth, :cohort]
 
+def input_instructions
+  puts "Please enter the details of the students:"
+end
+
+def check_for_valid_name(input)
+  while input == ""
+    puts "You must enter a name" 
+    print "> "
+    input = STDIN.gets.chomp
+  end
+  return input
+end
+
+def check_for_valid_cohort(input)
+  while !($cohorts.include?(input.downcase))
+    if input == ""
+      return input = :november
+    end
+    print "That's not a month of the year!"
+    puts " What is the student's cohort?"
+    print "> "
+    input = STDIN.gets.chomp
+  end
+  return input
+end
+
 def input_students
-  puts "Please enter the details of the students"
-  puts "To finish, just hit return when asked for a name"
-  puts "To ignore a value, just hit return"
-  # create an empty array
+  input_instructions
   loop do
     $options.each do |option|
       prompt_for_information_on(option)
       input = STDIN.gets.chomp
-      return @students if option == :name && input == ""
       if option == :name
-        @students << {name: input}
+        input = check_for_valid_name(input)
+        @students << {:name => input}
       elsif option == :cohort
-        while !($cohorts.include?(input.downcase))
-          puts "That's not a month of the year!"
-          puts "What is the student's cohort?"
-          input = STDIN.gets.chomp
-        end
-        @students.last[option] = input.downcase.to_sym
-        @students.last[option] = :november if @students.last[option] == :""
+        input = check_for_valid_cohort(input)
+        @students.last[:cohort] = input.downcase.to_sym
+        puts "Would you like to enter another student?"; print "> "
+        return @students if STDIN.gets.chomp.downcase == "no"
       else
         @students.last[option] = input
       end
@@ -33,7 +53,7 @@ end
 
 def print_students
   @students.each do |student|
-    student.each_value do |v|
+    student.each_value do |v| 
       print v.to_s.ljust($column_width)
     end
     print "\n"
@@ -56,22 +76,25 @@ end
 
 def print_menu
   puts "What do you want to do?"
-  puts "Use '1' to input student details."
-  puts "Use '2' to display all student details on the system."
-  puts "Use '3' to save student details to students.csv."
-  puts "Use '4' to load student details from students.csv."
-  puts "Use '9' to exit the program."
+  print "'1': input student details."
+  puts "'2': display existing student details."
+  print "'3': save student details."
+  print "'4': load student details from students.csv."
+  puts "'9': exit the program."
+  print "> "
 end
 
 def print_header
-  puts "The students of Villains Academy".center($line_width)
-  puts "-------------".center($line_width)
-  $options.each { |option| print option.to_s.ljust($column_width)}
+  puts "The students of Villains Academy".upcase.center($line_width)
+  puts ""
+  $options.each { |option| print option.to_s.capitalize.ljust($column_width)}
+  print "\n"
+  print ("-" * $line_width)
   print "\n"
 end
 
 def print_footer
-  puts "-----------".center($line_width)
+  puts ("-" * $line_width)
   if @students.count == 1
     puts "Overall, we have #{@students.count} great student".center($line_width)
   else
@@ -85,13 +108,14 @@ def prompt_for_information_on(option)
   else
     puts "What is the student's #{option.to_s.gsub(/_/, " ")}?"
   end
+  print "> "
 end
 
 def show_students
   unless @students == []
     print_header
-    print_student_list_by_cohort
-    #print_students
+    #print_student_list_by_cohort
+    print_students
     print_footer
   else
     puts "There are no student details on the system at present."
@@ -148,8 +172,10 @@ end
 def try_load_students
   filename = ARGV.first
   if filename.nil?
-    load_students("students.csv")
-    puts "Loaded #{@students.count} from 'students.csv'."
+    if File.exists?("students.csv")
+      load_students("students.csv")
+      puts "Loaded #{@students.count} students from 'students.csv'."
+    end
   elsif File.exists?(filename)
     load_students(filename)
     puts "Loaded #{@students.count} from #{filename}."
