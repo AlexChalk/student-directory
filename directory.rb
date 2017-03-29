@@ -145,8 +145,10 @@ def show_students
 end
 
 def save_students
+  puts "Which file should we save to? Enter the filename below:"; print "> "
+  filename = gets.chomp; filename = "students.csv" if filename == ""
   # open the file for writing
-  file = File.open("students.csv", "w")
+  file = File.open(filename, "w")
   # iterate over the array of students
   @students.each do |student|
     student_data = []
@@ -155,25 +157,37 @@ def save_students
     file.puts csv_line
   end
   file.close
-  puts "Saved #{@students.count} students' data to file.".fancy_announcement
+  puts "Saved #{@students.count} students' data to #{filename}.".fancy_announcement
 end
 
-def load_students(filename = "students.csv")
-  file = File.open(filename, "r")
-  file.readlines.each do |line|
-    array = line.chomp.split(",")
-    build_student(array)
+def load_from_file_user_prompt(filename)
+  unless filename
+    puts "Warning, this will erase all unsaved data in your session."
+    puts "Which file should we load from? Enter the filename below:"; print "> "
   end
-  file.close
-  puts "Loaded #{@students.count} students' data from #{filename}.".fancy_announcement
+end
+
+def load_students(filename = false)
+  load_from_file_user_prompt(filename)
+  filename = gets.chomp unless filename; filename = "students.csv" if filename == ""
+  @students = []
+  if File.exists?(filename)
+    file = File.open(filename, "r")
+    file.readlines.each do |line|
+      array = line.chomp.split(",")
+      build_student(array)
+    end
+    file.close
+    puts "Loaded #{@students.count} students' data from #{filename}.".fancy_announcement
+  else
+    puts "Sorry, #{filename} doesn't exist."
+  end
 end
 
 def load_students_on_startup
   filename = ARGV.first
   if filename.nil?
-    if File.exists?("students.csv")
-      load_students("students.csv")
-    end
+    load_students("students.csv")
   elsif File.exists?(filename)
     load_students(filename)
   else
