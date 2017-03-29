@@ -8,7 +8,7 @@ def input_instructions
   puts "Please enter the details of the students:"
 end
 
-def check_for_valid_name(input)
+def ensure_valid_name(input)
   while input == ""
     puts "You must enter a name" 
     print "> "
@@ -17,7 +17,7 @@ def check_for_valid_name(input)
   return input
 end
 
-def check_for_valid_cohort(input)
+def ensure_valid_cohort(input)
   while !($cohorts.include?(input.downcase))
     if input == ""
       return input = :november
@@ -30,24 +30,40 @@ def check_for_valid_cohort(input)
   return input
 end
 
+def build_student(array, &custom_instructions)
+  block = (custom_instructions || Proc.new { |a| })
+  @student = {}
+  $options.each_index do |x|
+    input = block.call($options[x])
+    input ||= array[x]
+    option_data_validity_checks(x, input)
+  end
+  @students << @student
+end
+
+def option_data_validity_checks(index, input)
+  if $options[index] == :name
+    name = ensure_valid_name(input)
+    @student[:name] = name
+  elsif $options[index] == :cohort
+    cohort = ensure_valid_cohort(input)
+    @student[:cohort] = cohort.downcase.to_sym
+  else
+    @student[$options[index]] = input
+  end
+end
+
+$get_user_input = Proc.new do |x|
+  prompt_for_information_on(x)
+  input = STDIN.gets.chomp
+end
+
 def input_students
   input_instructions
   loop do
-    $options.each do |option|
-      prompt_for_information_on(option)
-      input = STDIN.gets.chomp
-      if option == :name
-        input = check_for_valid_name(input)
-        @students << {:name => input}
-      elsif option == :cohort
-        input = check_for_valid_cohort(input)
-        @students.last[:cohort] = input.downcase.to_sym
-        puts "Would you like to enter another student?"; print "> "
-        return @students if STDIN.gets.chomp.downcase == "no"
-      else
-        @students.last[option] = input
-      end
-    end
+    build_student([], &$get_user_input)
+    puts "Would you like to enter another student?"; print "> "
+    return @students if STDIN.gets.chomp.downcase == "no"
   end
 end
 
@@ -134,20 +150,15 @@ def save_students
   end
   file.close
 end
+$options.count.times do |i|
+  
+end
 
 def load_students(filename = "students.csv")
   file = File.open(filename, "r")
   file.readlines.each do |line|
     array = line.chomp.split(",")
-    array.each_index do |x|
-      if x == 0
-        @students << {$options[x] => array[x]}
-      elsif x == array.length-1
-        @students.last[$options[x]] = array[x].to_sym
-      else
-        @students.last[$options[x]] = array[x]
-      end
-    end
+    build_student(array)
   end
   file.close
 end
