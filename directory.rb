@@ -12,7 +12,7 @@ def input_students
   loop do
     $options.each do |option|
       prompt_for_information_on(option)
-      input = gets.chomp
+      input = STDIN.gets.chomp
       return @students if option == :name && input == ""
       if option == :name
         @students << {name: input}
@@ -20,7 +20,7 @@ def input_students
         while !($cohorts.include?(input.downcase))
           puts "That's not a month of the year!"
           puts "What is the student's cohort?"
-          input = gets.chomp
+          input = STDIN.gets.chomp
         end
         @students.last[option] = input.downcase.to_sym
         @students.last[option] = :november if @students.last[option] == :""
@@ -111,8 +111,8 @@ def save_students
   file.close
 end
 
-def load_students
-  file = File.open("students.csv", "r")
+def load_students(filename = "students.csv")
+  file = File.open(filename, "r")
   file.readlines.each do |line|
     array = line.chomp.split(",")
     array.each_index do |x|
@@ -145,12 +145,27 @@ def process(selection)
   end
 end
 
+def try_load_students
+  filename = ARGV.first
+  if filename.nil?
+    load_students("students.csv")
+    puts "Loaded #{@students.count} from 'students.csv'."
+  elsif File.exists?(filename)
+    load_students(filename)
+    puts "Loaded #{@students.count} from #{filename}."
+  else
+    puts "Sorry, #{filename} doesn't exist."
+    exit
+  end
+end
+
 def interactive_menu
   loop do
     print_menu
-    process(gets.chomp)
+    process(STDIN.gets.chomp)
   end
 end
+try_load_students
 interactive_menu
 
 #    if student[:name].downcase[0] == "t" && student[:name].length < 12
