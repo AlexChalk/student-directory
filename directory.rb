@@ -148,15 +148,15 @@ def save_students
   puts "Which file should we save to? Enter the filename below:"; print "> "
   filename = gets.chomp; filename = "students.csv" if filename == ""
   # open the file for writing
-  file = File.open(filename, "w")
+  File.open(filename, "w") do |file| 
   # iterate over the array of students
-  @students.each do |student|
-    student_data = []
-    student.each_value { |v| student_data << v }
-    csv_line = student_data.join(",")
-    file.puts csv_line
+    @students.each do |student|
+      student_data = []
+      student.each_value { |v| student_data << v }
+      csv_line = student_data.join(",")
+      file.puts csv_line
+    end
   end
-  file.close
   puts "Saved #{@students.count} students' data to #{filename}.".fancy_announcement
 end
 
@@ -172,12 +172,12 @@ def load_students(filename = false)
   filename = gets.chomp unless filename; filename = "students.csv" if filename == ""
   @students = []
   if File.exists?(filename)
-    file = File.open(filename, "r")
-    file.readlines.each do |line|
-      array = line.chomp.split(",")
-      build_student(array)
+    File.open(filename, "r") do |file| 
+      file.readlines.each do |line|
+        array = line.chomp.split(",")
+        build_student(array)
+      end
     end
-    file.close
     puts "Loaded #{@students.count} students' data from #{filename}.".fancy_announcement
   else
     puts "Sorry, #{filename} doesn't exist."
