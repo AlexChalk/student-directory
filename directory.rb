@@ -1,5 +1,5 @@
 @students = []
-$cohorts = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
+$valid_cohorts = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"]
 $line_width = 100
 $column_width = 20
 $options = [:name, :height, :hobbies, :country_of_birth, :cohort]
@@ -18,7 +18,7 @@ def ensure_valid_name(input)
 end
 
 def ensure_valid_cohort(input)
-  while !($cohorts.include?(input.downcase))
+  until $valid_cohorts.include?(input.downcase)
     if input == ""
       return input = :november
     else
@@ -31,7 +31,7 @@ def ensure_valid_cohort(input)
   return input
 end
 
-def build_student(saved_data, &user_input_block)
+def build_student(saved_data=[], &user_input_block)
   block = (user_input_block || Proc.new { |a| })
   @student = {}
   $options.each_index do |x|
@@ -55,11 +55,16 @@ def option_data_validity_checks(index, input)
 end
 
 def input_students
+  count = 0
   input_instructions
   loop do
-    build_student([], &$get_user_input)
+    build_student(&$get_user_input)
+    count += 1
     puts "Would you like to enter another student?"; print "> "
-    return @students if STDIN.gets.chomp.downcase == "no"
+    if STDIN.gets.chomp.downcase == "no"
+      puts "Details successfully added to the session.".fancy_announcement
+      return @students 
+    end
   end
 end
 
@@ -102,10 +107,10 @@ end
 
 def print_menu
   puts "What do you want to do?"
-  print "'1': input student details."
-  puts "'2': display existing student details."
-  print "'3': save student details."
-  print "'4': load student details from students.csv."
+  print "'1': input student details. "
+  puts "'2': display existing student details. "
+  print "'3': save student details to a file. "
+  print "'4': load student details from a file. "
   puts "'9': exit the program."
   print "> "
 end
@@ -113,7 +118,7 @@ end
 def print_header
   puts "The students of Villains Academy".upcase.center($line_width)
   puts ""
-  $options.each { |option| print option.to_s.capitalize.ljust($column_width)}
+  $options.each { |option| print option.to_s.gsub(/_/, " ").capitalize.ljust($column_width)}
   print "\n"
   print ("-" * $line_width)
   print "\n"
@@ -150,9 +155,7 @@ def save_students
     file.puts csv_line
   end
   file.close
-end
-$options.count.times do |i|
-  
+  puts "Saved #{@students.count} students' data to file.".fancy_announcement
 end
 
 def load_students(filename = "students.csv")
@@ -162,6 +165,7 @@ def load_students(filename = "students.csv")
     build_student(array)
   end
   file.close
+  puts "Loaded #{@students.count} students' data from #{filename}.".fancy_announcement
 end
 
 def load_students_on_startup
@@ -169,14 +173,18 @@ def load_students_on_startup
   if filename.nil?
     if File.exists?("students.csv")
       load_students("students.csv")
-      puts "Loaded #{@students.count} students from 'students.csv'."
     end
   elsif File.exists?(filename)
     load_students(filename)
-    puts "Loaded #{@students.count} from #{filename}."
   else
     puts "Sorry, #{filename} doesn't exist."
     exit
+  end
+end
+
+class String
+  def fancy_announcement
+    return "#{"-"*$line_width}\n".concat(self, "\n#{"-"*$line_width}\n")
   end
 end
 
