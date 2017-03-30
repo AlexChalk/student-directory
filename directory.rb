@@ -38,7 +38,8 @@ def build_student(saved_data=[], &user_input_block)
   $options.each_index do |x|
     input = block.call($options[x])
     input ||= saved_data[x]
-    option_data_validity_checks(x, input)
+    input = option_data_validity_checks(x, input)
+    @student[$options[x]] = input
   end
   @students << @student
 end
@@ -46,10 +47,9 @@ end
 def option_data_validity_checks(index, input)
   if $options[index] == :name
     name = ensure_valid_name(input)
-    @student[:name] = name
   elsif $options[index] == :cohort
     cohort = ensure_valid_cohort(input)
-    @student[:cohort] = cohort.downcase.to_sym
+    cohort = cohort.downcase.to_sym
   else
     @student[$options[index]] = input
   end
