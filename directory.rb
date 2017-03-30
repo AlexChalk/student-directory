@@ -128,7 +128,6 @@ end
 def show_students
   unless @students == []
     print_header
-    #print_student_list_by_cohort
     print_students
     print_footer
   else
@@ -151,15 +150,15 @@ def save_students
 end
 
 def load_from_file_user_prompt(filename)
+  puts "Warning, this will erase all unsaved students in your session." unless filename == ARGV.first
   unless filename
-    puts "Warning, this will erase all unsaved students in your session."
     puts "Which file should we load from? Enter the filename below:"; print "> "
   end
 end
 
 def load_students(filename = false)
   load_from_file_user_prompt(filename)
-  filename = gets.chomp unless filename; filename = "students.csv" if filename == ""
+  filename = STDIN.gets.chomp unless filename; filename = "students.csv" if filename == ""
   @students = []
   if File.exists?(filename)
     CSV.foreach(filename) do |row| 
