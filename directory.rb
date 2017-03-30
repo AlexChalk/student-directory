@@ -92,27 +92,18 @@ def print_students
   end
 end
 
-def print_student_list_by_cohort
-  cohorts = @students.map{ |x| x[:cohort] }.uniq
-  cohorts.each do |cohort|
-    @students.each do |student|
-      if student[:cohort] == cohort
-        student.each_value do |v|
-          print v.to_s.ljust($column_width)
-        end
-        print "\n"
-      end
-    end
-  end
+def student_sort(array, parameter)
+  array.sort! { |x,y| x[parameter] <=> y[parameter] }
 end
 
 def print_menu
   puts "What do you want to do?"
   print "'1': input student details. "
-  puts "'2': display existing student details. "
-  print "'3': save student details to a file. "
-  print "'4': load student details from a file. "
-  puts "'9': exit the program."
+  print "'2': display student details sorted by name.\n"
+  print "'3': display student details sorted by cohort. "
+  print "'4': save student details to a file.\n"
+  print "'5': load student details from a file. "
+  print "'9': exit the program.\n"
   print "> "
 end
 
@@ -161,7 +152,7 @@ end
 
 def load_from_file_user_prompt(filename)
   unless filename
-    puts "Warning, this will erase all unsaved data in your session."
+    puts "Warning, this will erase all unsaved students in your session."
     puts "Which file should we load from? Enter the filename below:"; print "> "
   end
 end
@@ -210,10 +201,14 @@ def process(selection)
   when "1"
     @students = input_students
   when "2"
+    student_sort(@students, :name)
     show_students
   when "3"
-    save_students
+    student_sort(@students, :cohort)
+    show_students
   when "4"
+    save_students
+  when "5"
     load_students
   when "9"
     exit
