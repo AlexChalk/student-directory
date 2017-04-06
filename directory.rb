@@ -150,8 +150,8 @@ def save_students
 end
 
 def load_from_file_user_prompt(filename)
-  puts "Warning, this will erase all unsaved students in your session." unless filename == ARGV.first
-  unless filename
+   unless filename
+    puts "Warning, this will erase all unsaved students in your session."
     puts "Which file should we load from? Enter the filename below:"; print "> "
   end
 end
